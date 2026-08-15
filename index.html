@@ -3,221 +3,202 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Fábrica de Bicicletas em Operação</title>
+<title>Fábrica de Bicicletas — Gestão de Operações</title>
 <style>
-:root{
-  --bg:#101827; --panel:#17233a; --panel2:#20314f; --ink:#f4f7fb; --muted:#b9c5d6;
-  --accent:#65d6ad; --warn:#ffd166; --danger:#ff6b6b; --blue:#66a6ff; --purple:#b38cff;
-  --line:#334766; --ok:#61d394;
-}
-*{box-sizing:border-box}
-body{margin:0;background:linear-gradient(180deg,#0d1422,#17233a 55%,#101827);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;}
-button,input,select{font:inherit}
-button{border:0;border-radius:10px;padding:9px 12px;background:#2f4f7e;color:white;cursor:pointer;font-weight:700;box-shadow:0 2px 0 rgba(0,0,0,.35)}
-button:hover{filter:brightness(1.1)}
-button:disabled{opacity:.45;cursor:not-allowed;filter:grayscale(.5)}
-input,select{border-radius:10px;border:1px solid var(--line);background:#0f1a2d;color:var(--ink);padding:8px}
-small{color:var(--muted)}
-.app{max-width:1500px;margin:0 auto;padding:10px}
-.header{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#0f1b2f;border:1px solid var(--line);border-radius:14px;padding:8px 12px;position:sticky;top:0;z-index:3}
-.brand{display:flex;align-items:center;gap:10px;min-width:230px}.logo{font-size:28px}.title{line-height:1}.title h1{font-size:18px;margin:0}.title small{font-size:11px}
-.metrics{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.pill{background:#182b49;border:1px solid var(--line);border-radius:999px;padding:5px 9px;font-size:12px;white-space:nowrap}.pill strong{color:#fff}.actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
-.notice{margin:8px 0;background:#1f314f;border:1px solid var(--line);border-radius:12px;padding:8px 12px;display:flex;gap:10px;align-items:center;justify-content:space-between}.notice b{color:var(--warn)}
-.setup{background:#13213a;border:1px solid var(--line);border-radius:16px;padding:14px;margin:10px 0}.setup-grid{display:grid;grid-template-columns:repeat(4,minmax(170px,1fr));gap:10px}.field{display:flex;flex-direction:column;gap:4px}.field label{font-size:12px;color:var(--muted);font-weight:700}
-.grid{display:grid;grid-template-columns:1.15fr 1fr;grid-template-rows:minmax(260px,auto) minmax(310px,auto);gap:10px}.panel{background:rgba(23,35,58,.96);border:1px solid var(--line);border-radius:16px;padding:10px;min-height:220px;overflow:hidden}.panel h2{margin:0 0 8px;font-size:15px;display:flex;justify-content:space-between;align-items:center}.panel h2 span{font-size:11px;color:var(--muted);font-weight:500}.scroll{max-height:285px;overflow:auto;padding-right:3px}.card{background:#0f1b2f;border:1px solid var(--line);border-radius:14px;padding:9px;margin:7px 0}.card.warn{border-color:#c99935}.card.danger{border-color:#d35d5d}.row{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}.tag{border-radius:999px;padding:3px 7px;background:#294363;font-size:11px;color:#dce8f8;font-weight:800}.tag.urgent{background:#704045}.tag.ok{background:#2d5d4b}.tag.blue{background:#2e4f86}.tag.purple{background:#5a477b}.btnrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.mini{font-size:12px;padding:6px 8px}.danger-btn{background:#803441}.ok-btn{background:#2e7056}.warn-btn{background:#87631f}.purple-btn{background:#604889}.listline{display:grid;grid-template-columns:90px 1fr 60px;gap:6px;align-items:center;border-top:1px dashed #334766;padding:5px 0;font-size:12px}.stockGrid{display:grid;grid-template-columns:repeat(2,minmax(170px,1fr));gap:8px}.stockItem{background:#0f1b2f;border:1px solid var(--line);border-radius:12px;padding:8px}.stockItem h3{margin:0 0 4px;font-size:13px}.bar{height:12px;border-radius:8px;background:#263957;overflow:hidden;display:flex;margin:5px 0}.segA{background:#65d6ad}.segB{background:#ffd166}.segC{background:#53647c}.legend{display:flex;gap:6px;font-size:10px;color:var(--muted);flex-wrap:wrap}.sq{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:3px}.stationWrap{display:grid;grid-template-columns:repeat(4,minmax(160px,1fr));gap:8px}.station{background:#0f1b2f;border:1px solid var(--line);border-radius:14px;padding:8px;min-height:180px}.station.broken{border-color:var(--danger);box-shadow:0 0 0 1px rgba(255,107,107,.3)}.station h3{margin:0 0 5px;font-size:13px}.progressBox{height:48px;border:2px solid #364d70;border-radius:9px;background:#101827;position:relative;overflow:hidden;margin:7px 0}.progressFill{position:absolute;bottom:0;left:0;width:100%;background:#ffd166;transition:height .4s}.progressText{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;text-shadow:0 2px 2px #000}.supplierGrid{display:grid;grid-template-columns:repeat(3,minmax(180px,1fr));gap:8px}.modal{position:fixed;inset:0;background:rgba(5,10,18,.76);display:none;align-items:center;justify-content:center;z-index:10;padding:16px}.modal.show{display:flex}.modalBox{width:min(1100px,96vw);max-height:92vh;overflow:auto;background:#111d32;border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 20px 80px rgba(0,0,0,.5)}.modalBox h2{margin-top:0}.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}.tab{background:#223757}.tab.active{background:#4d78bd}.report{background:#fff;color:#111;padding:18px;border-radius:8px}.report h1,.report h2,.report h3{color:#111}.report table{border-collapse:collapse;width:100%;margin:8px 0}.report th,.report td{border:1px solid #999;padding:6px;text-align:left;font-size:12px}.report th{background:#eee}.report .muted{color:#444}.chartbar{height:18px;background:#2e73b8;border-radius:4px}.printOnly{display:none}.eventBox{background:#182b49;border:1px solid var(--line);border-radius:14px;padding:12px}.twoCol{display:grid;grid-template-columns:1fr 1fr;gap:10px}.componentTable{width:100%;border-collapse:collapse}.componentTable td,.componentTable th{border-bottom:1px solid #2d4161;padding:5px;font-size:12px;text-align:left}.componentTable th{color:var(--muted)}
-@media(max-width:1050px){.grid{grid-template-columns:1fr}.setup-grid{grid-template-columns:1fr 1fr}.supplierGrid,.stationWrap{grid-template-columns:1fr 1fr}}
-@media(max-width:650px){.setup-grid,.stockGrid,.twoCol,.supplierGrid,.stationWrap{grid-template-columns:1fr}.header{position:static;align-items:flex-start;flex-direction:column}.metrics{justify-content:flex-start}.grid{display:block}.panel{margin-bottom:10px}}
-@media print{body{background:#fff}.app,.modal:not(.printModal){display:none!important}.modal.printModal{position:static;display:block!important;background:#fff;padding:0}.modal.printModal .modalBox{box-shadow:none;border:0;max-height:none;width:100%;padding:0}.noPrint{display:none!important}.printOnly{display:block}.report{padding:0}.report table{page-break-inside:auto}.report tr{page-break-inside:avoid}}
+  :root{
+    --bg:#0f172a; --panel:#172554; --panel2:#1e293b; --card:#f8fafc; --ink:#0f172a;
+    --line:#38bdf8; --ok:#16a34a; --warn:#f59e0b; --bad:#dc2626; --muted:#64748b;
+    --paper:#fff7b3; --accent:#2563eb; --soft:#dbeafe;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(180deg,#0f172a,#111827);color:#e5e7eb;overflow-x:hidden}
+  header{position:sticky;top:0;z-index:10;background:#020617;border-bottom:2px solid #334155;padding:8px 12px}
+  .top{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+  h1{font-size:20px;margin:0;color:#fff;font-weight:800;letter-spacing:.3px}
+  .stats{display:flex;gap:8px;flex-wrap:wrap;font-size:13px}
+  .pill{background:#1e293b;border:1px solid #475569;border-radius:999px;padding:6px 10px;white-space:nowrap}
+  button{border:0;border-radius:9px;padding:8px 10px;font-weight:700;cursor:pointer;background:#e2e8f0;color:#0f172a;box-shadow:0 1px 0 #94a3b8}
+  button:hover{filter:brightness(.96)}
+  button.primary{background:#60a5fa;color:#082f49}
+  button.good{background:#86efac;color:#052e16}
+  button.warn{background:#fcd34d;color:#422006}
+  button.bad{background:#fca5a5;color:#450a0a}
+  button.ghost{background:#334155;color:#e5e7eb;border:1px solid #64748b}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  select,input{border-radius:8px;border:1px solid #94a3b8;padding:7px;background:white;color:#111827}
+  main{padding:10px;max-width:1520px;margin:0 auto}
+  .setup{background:#e0f2fe;color:#082f49;border:2px solid #7dd3fc;border-radius:16px;padding:14px;margin:10px auto;max-width:980px}
+  .setup h2{margin:0 0 8px;font-size:22px}.setup p{margin:6px 0;line-height:1.35}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .grid{display:grid;grid-template-columns:1.1fr 1fr;gap:10px}.wide{grid-column:1/-1}
+  .panel{background:rgba(30,41,59,.95);border:1px solid #475569;border-radius:16px;padding:10px;box-shadow:0 8px 20px rgba(0,0,0,.15)}
+  .panel h2{font-size:16px;margin:0 0 8px;color:#f8fafc;display:flex;align-items:center;justify-content:space-between;gap:6px}
+  .sub{font-size:12px;color:#cbd5e1;font-weight:400}.mini{font-size:12px;color:#475569}.muted{color:#94a3b8;font-size:12px}.cards{display:flex;gap:8px;flex-wrap:wrap}.card{background:#f8fafc;color:#0f172a;border-radius:12px;padding:9px;border:1px solid #cbd5e1;box-shadow:0 2px 0 rgba(0,0,0,.1)}
+  .order{width:300px;min-height:165px;position:relative}.order h3{margin:0 0 6px;font-size:15px}.badge{display:inline-block;border-radius:999px;padding:3px 7px;font-size:11px;font-weight:800;background:#dbeafe;color:#1e40af;margin:2px}.deadline.ok{background:#dcfce7;color:#166534}.deadline.warn{background:#fef3c7;color:#92400e}.deadline.bad{background:#fee2e2;color:#991b1b}
+  .bom{display:grid;grid-template-columns:repeat(2,minmax(120px,1fr));gap:3px;margin:6px 0}.bom span{font-size:12px;background:#eef2ff;border-radius:6px;padding:3px 5px}.bom .missing{background:#fee2e2;color:#991b1b;font-weight:800}.bom .okitem{background:#dcfce7;color:#166534}
+  .factory{background:#0b1220;border-radius:18px;border:2px solid #334155;padding:12px;overflow:auto}.flow{display:grid;grid-template-columns:150px repeat(4,1fr) 150px;gap:10px;align-items:stretch;min-width:1050px;position:relative}.station,.queueBox,.finishedBox{background:#f8fafc;color:#0f172a;border-radius:14px;border:2px solid #cbd5e1;min-height:175px;padding:8px;position:relative}.station:before,.queueBox:before{content:"";position:absolute;right:-18px;top:78px;border-left:18px solid #38bdf8;border-top:14px solid transparent;border-bottom:14px solid transparent}.station:last-of-type:before{display:none}.station h3,.queueBox h3,.finishedBox h3{font-size:14px;margin:0 0 6px;text-align:center}.status{font-size:12px;border-radius:7px;padding:4px;margin:4px 0;background:#e2e8f0}.working{background:#fef3c7;color:#92400e}.blocked{background:#fee2e2;color:#991b1b}.free{background:#dcfce7;color:#166534}.opchip{background:#dbeafe;color:#172554;border:1px solid #93c5fd;border-radius:10px;padding:5px 6px;margin:4px 0;font-size:12px;font-weight:700}.opchip.urgent{background:#fee2e2;border-color:#fca5a5}.opchip.blocked{background:#fecaca;border-color:#ef4444}.op-actions{display:flex;gap:4px;margin-top:4px;flex-wrap:wrap}.op-actions button{font-size:11px;padding:5px 6px}.progress{height:8px;background:#cbd5e1;border-radius:999px;overflow:hidden;margin-top:6px}.bar{height:100%;background:#38bdf8;width:0%}.tinyTitle{font-size:11px;font-weight:800;color:#64748b;text-transform:uppercase;margin-top:6px}.stockGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px}.stock{background:#f8fafc;color:#0f172a;border-radius:10px;padding:8px;border:1px solid #cbd5e1}.stock strong{display:block;margin-bottom:4px}.stock .meter{height:9px;background:#e5e7eb;border-radius:99px;overflow:hidden}.meter span{display:block;height:100%;background:#22c55e}.meter .low{background:#ef4444}.meter .med{background:#f59e0b}.supplierGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:8px}.supplier{background:#f8fafc;color:#0f172a;border-radius:12px;padding:8px;border:1px solid #cbd5e1}.supplier h3{margin:0 0 5px;font-size:14px}.buyrow{display:flex;gap:5px;align-items:center;margin-top:6px}.buyrow input{width:64px}.transit{background:#ecfeff;color:#155e75;border-radius:8px;padding:5px;margin:4px 0;font-size:12px}.note{background:var(--paper);color:#3b2f00;border:1px solid #facc15;border-radius:14px;padding:10px;box-shadow:4px 4px 0 rgba(0,0,0,.15);max-width:360px}.note h3{margin:0 0 5px}.check{display:flex;justify-content:space-between;gap:8px;border-bottom:1px dashed rgba(0,0,0,.18);padding:3px 0;font-size:13px}.check.ok{color:#166534}.check.no{color:#991b1b;font-weight:800}.log{max-height:130px;overflow:auto;background:#020617;border-radius:8px;padding:6px;font-size:12px;color:#d1d5db}.log p{margin:3px 0}.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.66);z-index:50;align-items:center;justify-content:center;padding:16px}.modal .box{background:#f8fafc;color:#0f172a;border-radius:16px;padding:16px;max-width:1000px;max-height:90vh;overflow:auto;width:min(100%,980px)}.modal h2{margin-top:0}.reportBlock{border:1px solid #cbd5e1;border-radius:12px;padding:10px;margin:10px 0;background:#fff}.reportBlock h3{margin:0 0 6px}.reportGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px}table{width:100%;border-collapse:collapse;font-size:13px}td,th{border:1px solid #cbd5e1;padding:5px;text-align:left}th{background:#e2e8f0}.pauseOverlay{display:none;position:fixed;right:18px;bottom:18px;background:#fef3c7;color:#78350f;border:2px solid #f59e0b;border-radius:14px;padding:12px;z-index:30;max-width:380px;box-shadow:0 8px 25px rgba(0,0,0,.25)}.foot{font-size:11px;text-align:center;color:#cbd5e1;margin:10px 0 20px}.hide{display:none!important}
+  @media(max-width:900px){.grid{grid-template-columns:1fr}.flow{min-width:900px}h1{font-size:16px}.order{width:100%}}
+  @media print{body{background:white;color:black}header,main,.pauseOverlay{display:none!important}.modal{display:block!important;position:static;background:white;padding:0}.modal .box{max-width:none;max-height:none;overflow:visible}.noPrint{display:none!important}}
 </style>
 </head>
 <body>
-<div class="app">
-  <div class="header">
-    <div class="brand"><div class="logo">🚲</div><div class="title"><h1>Fábrica de Bicicletas</h1><small>Simulador de Operações Industriais</small></div></div>
-    <div class="metrics" id="metrics"></div>
-    <div class="actions">
-      <button class="mini" id="pauseBtn" onclick="togglePause()">Pausar</button>
-      <button class="mini" onclick="openManager()">Painel gerencial</button>
-      <button class="mini danger-btn" onclick="resetGame()">Resetar</button>
+<header>
+  <div class="top">
+    <h1>🚲 Fábrica de Bicicletas — Gestão de Operações</h1>
+    <div class="stats">
+      <span class="pill">Dia: <b id="day">1</b></span><span class="pill">Tempo: <b id="time">20:00</b></span><span class="pill">Caixa: <b id="cash">R$ 5.000</b></span><span class="pill">Estratégia: <b id="strategyLabel">—</b></span><span class="pill">Pedidos: <b id="ordersCount">0</b></span>
+      <button class="warn" id="pauseBtn" onclick="togglePause()" disabled>Pausar</button><button class="bad" id="endBtn" onclick="finishDay()" disabled>Encerrar dia</button>
     </div>
   </div>
-  <div class="notice" id="eventNotice"><span><b>Evento:</b> aguardando início do dia.</span><span><b>Estratégia:</b> híbrida</span></div>
-
-  <section class="setup" id="setupPanel">
-    <h2>Fábrica de Bicicletas — Dia de Produção</h2>
-    <p><small>Sistema desenvolvido para estudar produção puxada, empurrada, Just in Time, fornecedores, estoque, linha de produção, terceirização, custos e objetivos de desempenho.</small></p>
-    <div class="setup-grid">
-      <div class="field"><label>Nome da fábrica</label><input id="factoryName" value="Bike Vale" /></div>
-      <div class="field"><label>Estratégia produtiva</label><select id="strategy"><option value="hybrid">Híbrida: peças planejadas e montagem por pedido</option><option value="pull">Puxada: produzir após pedido</option><option value="push">Empurrada: produzir para estoque</option><option value="jit">Just in Time: estoque mínimo</option></select></div>
-      <div class="field"><label>Prioridade operacional</label><select id="priority"><option>Custo</option><option>Rapidez</option><option>Confiabilidade</option><option>Qualidade</option><option>Flexibilidade</option></select></div>
-      <div class="field"><label>Dificuldade</label><select id="difficulty"><option value="aprendiz">Aprendiz</option><option value="gerente" selected>Gerente</option><option value="pico">Pico de produção</option></select></div>
+</header>
+<main>
+  <section id="setup" class="setup">
+    <h2>Pastelaria ficou para trás: agora é chão de fábrica.</h2>
+    <p>O desafio é observar uma operação industrial: pedidos viram OPs, peças compartilhadas podem travar vários modelos, fornecedores têm prazo e confiabilidade, e as bicicletas percorrem uma linha de produção.</p>
+    <div class="row">
+      <label><b>Estratégia produtiva declarada:</b></label>
+      <select id="strategy">
+        <option value="hibrida">Híbrida — componentes planejados e montagem conforme pedido</option>
+        <option value="puxada">Produção puxada — produzir apenas após pedido</option>
+        <option value="empurrada">Produção empurrada — formar produto acabado com previsão</option>
+        <option value="jit">Just in Time — estoque mínimo e dependência de entrega</option>
+      </select>
+      <button class="primary" onclick="startGame()">Iniciar dia de produção</button>
     </div>
-    <div class="btnrow"><button class="ok-btn" onclick="startDay()">Iniciar dia de produção — 20 min</button><button onclick="openConcepts()">Ver conceitos</button></div>
+    <p class="mini">A estratégia escolhida não muda automaticamente as regras: ela serve para o relatório avaliar se suas decisões foram coerentes com sua intenção gerencial.</p>
   </section>
 
-  <main class="grid">
-    <section class="panel">
-      <h2>1. Pedidos de clientes <span>aceite, recuse e acompanhe prazos</span></h2>
-      <div class="scroll" id="ordersBox"></div>
-    </section>
-    <section class="panel">
-      <h2>2. Fornecedores / compras <span>prazo, custo e criticidade</span></h2>
-      <div class="tabs"><button class="mini tab active" onclick="showSupply('buy')">Comprar</button><button class="mini tab" onclick="showSupply('transit')">Em trânsito</button><button class="mini tab" onclick="showSupply('outsourcing')">Terceirizar</button></div>
-      <div class="scroll" id="supplyBox"></div>
-    </section>
-    <section class="panel">
-      <h2>3. Estoque de componentes <span>disponível, reservado e espaço livre</span></h2>
-      <div class="stockGrid" id="stockBox"></div>
-    </section>
-    <section class="panel">
-      <h2>4. Linha de produção <span>cada estação tem start e tempo próprio</span></h2>
-      <div class="stationWrap" id="stationsBox"></div>
-    </section>
-  </main>
-</div>
+  <section id="game" class="hide">
+    <div class="grid">
+      <div class="panel">
+        <h2>1. Pedidos e Ordens de Produção <span class="sub">aceitar, recusar, terceirizar ou liberar OP</span></h2>
+        <div id="orders" class="cards"></div>
+      </div>
+      <div class="panel">
+        <h2>2. Checklist da OP <span class="sub">nota de liberação</span></h2>
+        <div id="checklist" class="note">Selecione um pedido ou uma OP para verificar materiais, prazo e risco antes de iniciar.</div>
+      </div>
 
-<div class="modal" id="eventModal"><div class="modalBox eventBox"><h2>Evento do dia</h2><div id="eventModalContent"></div><div class="btnrow"><button class="ok-btn" onclick="closeEventModal()">Começar produção</button></div></div></div>
-<div class="modal" id="managerModal"><div class="modalBox"><div class="row"><h2>Painel gerencial</h2><button class="mini" onclick="closeManager()">Fechar</button></div><div id="managerContent"></div></div></div>
-<div class="modal" id="conceptsModal"><div class="modalBox"><div class="row"><h2>Conceitos trabalhados</h2><button class="mini" onclick="closeConcepts()">Fechar</button></div><div class="twoCol"><div class="card"><b>Produção puxada</b><p>Produz a partir do pedido real, reduzindo estoque de produto acabado, mas aumentando dependência de componentes disponíveis.</p></div><div class="card"><b>Produção empurrada</b><p>Produz com base em previsão, aumentando rapidez de entrega, mas podendo gerar estoque parado.</p></div><div class="card"><b>Just in Time</b><p>Busca estoque mínimo e maior sincronização com fornecedores. Reduz capital parado, mas aumenta risco de parada.</p></div><div class="card"><b>Híbrida</b><p>Mantém componentes comuns planejados e monta bicicletas conforme pedido. É uma lógica assemble-to-order.</p></div></div><p><small>Fábrica de Bicicletas — protótipo didático para Gestão de Operações e Serviços.</small></p></div></div>
-<div class="modal" id="reportModal"><div class="modalBox"><div class="row noPrint"><h2>Relatório do dia</h2><div><button class="mini" onclick="printReport()">Imprimir / salvar PDF</button><button class="mini ok-btn" onclick="nextDay()">Próximo dia</button><button class="mini" onclick="closeReport()">Fechar</button></div></div><div class="report" id="reportContent"></div></div></div>
+      <div class="panel wide">
+        <h2>3. Mapa visual do processo produtivo <span class="sub">fila → estações → produto acabado</span></h2>
+        <div class="factory">
+          <div class="flow">
+            <div class="queueBox"><h3>Fila inicial de OPs</h3><div class="muted">Escolha a OP e clique em iniciar.</div><div id="initialQueue"></div></div>
+            <div class="station" id="st0"><h3>1. Estrutura</h3><div id="st0status" class="status free">Livre</div><div id="st0job"></div><div class="tinyTitle">Fila para etapa</div><div id="st0queue"></div></div>
+            <div class="station" id="st1"><h3>2. Rodas/Pedais</h3><div id="st1status" class="status free">Livre</div><div id="st1job"></div><div class="tinyTitle">Fila para etapa</div><div id="st1queue"></div></div>
+            <div class="station" id="st2"><h3>3. Transmissão</h3><div id="st2status" class="status free">Livre</div><div id="st2job"></div><div class="tinyTitle">Fila para etapa</div><div id="st2queue"></div></div>
+            <div class="station" id="st3"><h3>4. Qualidade</h3><div id="st3status" class="status free">Livre</div><div id="st3job"></div><div class="tinyTitle">Fila para etapa</div><div id="st3queue"></div></div>
+            <div class="finishedBox"><h3>Expedição / Produto acabado</h3><div id="finished"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>4. Estoque de componentes <span class="sub">comum, específico, reservado e disponível</span></h2>
+        <div id="stock" class="stockGrid"></div>
+      </div>
+      <div class="panel">
+        <h2>5. Fornecedores e compras <span class="sub">prazo, custo, criticidade e confiabilidade</span></h2>
+        <div class="row" style="margin-bottom:8px">
+          <select id="partSelect"></select><select id="supplierSelect"><option value="eco">Econômico</option><option value="reg">Regular</option><option value="pre">Premium</option></select><input id="qtyBuy" type="number" min="1" value="4"/><button class="primary" onclick="buyPart()">Comprar</button>
+        </div>
+        <div id="supplierInfo" class="supplierGrid"></div>
+        <h2 style="margin-top:10px">Compras em trânsito</h2><div id="transit"></div>
+      </div>
+      <div class="panel wide">
+        <h2>Diário da operação</h2><div id="log" class="log"></div>
+      </div>
+    </div>
+  </section>
+  <div class="foot">Sistema desenvolvido para a disciplina Gestão de Operações e Serviços, Professor Me. Luan Sodré da UNIVALE.</div>
+</main>
+<div id="pauseOverlay" class="pauseOverlay"><b>Produção pausada.</b><br>Use este momento para analisar pedidos, estoque, fornecedores, gargalos e sequenciamento antes de tomar decisão.</div>
+<div id="reportModal" class="modal"><div class="box"><div id="report"></div><div class="row noPrint"><button class="primary" onclick="window.print()">Imprimir / salvar em PDF</button><button onclick="closeReport()">Fechar</button><button class="good" onclick="nextDay()">Iniciar próximo dia</button></div></div></div>
 
 <script>
-const fmt = v => (v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
-const rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
-const choice=a=>a[Math.floor(Math.random()*a.length)];
-
-const compDefs={
-  frameUrban:{name:'Quadro urbano', unit:'un.', cost:{eco:95,reg:115,prem:145}, critical:'Alta'},
-  frameSport:{name:'Quadro esportivo', unit:'un.', cost:{eco:150,reg:180,prem:225}, critical:'Alta'},
-  wheelUrban:{name:'Roda urbana', unit:'un.', cost:{eco:32,reg:40,prem:52}, critical:'Alta'},
-  wheelSport:{name:'Roda esportiva', unit:'un.', cost:{eco:52,reg:65,prem:82}, critical:'Alta'},
-  pedals:{name:'Pedais', unit:'par', cost:{eco:18,reg:24,prem:30}, critical:'Média'},
-  handlebar:{name:'Guidão', unit:'un.', cost:{eco:28,reg:35,prem:45}, critical:'Média'},
-  seat:{name:'Banco', unit:'un.', cost:{eco:25,reg:32,prem:42}, critical:'Média'},
-  chain:{name:'Corrente', unit:'un.', cost:{eco:26,reg:34,prem:44}, critical:'Alta'},
-  package:{name:'Embalagem', unit:'un.', cost:{eco:8,reg:10,prem:13}, critical:'Baixa'}
+const DAY_SECONDS=20*60;
+const fmtMoney=v=>v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const fmtTime=s=>{s=Math.max(0,Math.floor(s));return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`};
+const parts={
+  quadroU:{name:'Quadro urbano',cap:16,critical:'Alta',unit:{eco:95,reg:115,pre:145}},
+  quadroE:{name:'Quadro esportivo',cap:10,critical:'Alta',unit:{eco:150,reg:180,pre:225}},
+  rodasU:{name:'Rodas urbanas',cap:32,critical:'Alta',unit:{eco:32,reg:40,pre:52}},
+  rodasE:{name:'Rodas esportivas',cap:20,critical:'Alta',unit:{eco:55,reg:68,pre:86}},
+  pedais:{name:'Pedais',cap:36,critical:'Média',unit:{eco:10,reg:13,pre:17}},
+  guidao:{name:'Guidão',cap:18,critical:'Média',unit:{eco:18,reg:23,pre:30}},
+  banco:{name:'Banco',cap:18,critical:'Média',unit:{eco:20,reg:26,pre:34}},
+  corrente:{name:'Corrente',cap:18,critical:'Alta',unit:{eco:22,reg:28,pre:36}},
+  embalagem:{name:'Embalagem',cap:24,critical:'Baixa',unit:{eco:5,reg:7,pre:10}}
 };
-const bikeDefs={
-  urban:{name:'Bike Urbana', price:600, times:{base:35,wheels:35,finish:25,quality:20}, bom:{frameUrban:1,wheelUrban:2,pedals:1,handlebar:1,seat:1,chain:1,package:1}},
-  sport:{name:'Bike Esportiva', price:900, times:{base:48,wheels:45,finish:38,quality:30}, bom:{frameSport:1,wheelSport:2,pedals:1,handlebar:1,seat:1,chain:1,package:1}}
+const suppliers={eco:{name:'Econômico',lead:360,reliability:.72,label:'baixo custo, maior prazo'},reg:{name:'Regular',lead:180,reliability:.86,label:'equilíbrio'},pre:{name:'Premium',lead:60,reliability:.96,label:'rápido e caro'}};
+const models={
+  urbana:{name:'Bike Urbana',icon:'🚲',price:600,bom:{quadroU:1,rodasU:2,pedais:2,guidao:1,banco:1,corrente:1,embalagem:1}},
+  esportiva:{name:'Bike Esportiva',icon:'🏁',price:900,bom:{quadroE:1,rodasE:2,pedais:2,guidao:1,banco:1,corrente:1,embalagem:1}}
 };
-const supplierDefs={
-  eco:{name:'Econômico', lead:360, reliability:.72, note:'barato, lento e mais sujeito a atraso'},
-  reg:{name:'Regular', lead:180, reliability:.86, note:'equilíbrio entre custo e prazo'},
-  prem:{name:'Premium', lead:60, reliability:.96, note:'mais caro, rápido e confiável'}
-};
-const stationDefs=[
-  {id:'base',name:'Montagem base',desc:'quadro, banco e estrutura'},
-  {id:'wheels',name:'Rodas e pedais',desc:'rodas, pedais e ajustes'},
-  {id:'finish',name:'Acabamento',desc:'guidão, corrente e embalagem'},
-  {id:'quality',name:'Qualidade',desc:'inspeção e liberação'}
-];
-const events=[
-  {name:'Demanda estável', desc:'O dia tende a seguir a média de pedidos.', demand:1, patience:1, breakRisk:1},
-  {name:'Pedido de lojas parceiras', desc:'Mais pedidos podem chegar durante o dia.', demand:1.25, patience:1, breakRisk:1},
-  {name:'Mercado cauteloso', desc:'Menos pedidos chegam, mas há menos pressão de prazo.', demand:.78, patience:1.18, breakRisk:1},
-  {name:'Pressão por entrega rápida', desc:'Clientes chegam com prazos mais curtos.', demand:1.05, patience:.82, breakRisk:1},
-  {name:'Máquinas exigidas', desc:'Maior risco de parada em alguma estação.', demand:1, patience:1, breakRisk:1.65}
-];
+const stations=[{name:'Estrutura',time:{urbana:34,esportiva:42}},{name:'Rodas/Pedais',time:{urbana:42,esportiva:52}},{name:'Transmissão',time:{urbana:28,esportiva:34}},{name:'Qualidade',time:{urbana:32,esportiva:42}}];
 let state;
-function initialState(){
-  const stock={}; Object.keys(compDefs).forEach(k=>stock[k]={available: k.includes('Sport')?4: (k.includes('Urban')?7:12), reserved:0, cap:k.includes('Sport')?10:(k.includes('Urban')?14:22)});
-  return {day:1,time:1200,running:false,paused:false,cash:5000,factoryName:'Bike Vale',strategy:'hybrid',priority:'Custo',difficulty:'gerente',event:null,lastTick:null,nextOrderIn:12,orderSeq:1,orders:[],transit:[],stations:{},finished:{urban:0,sport:0},wip:[],log:[],decisions:[],stats:null,outsourced:[],investments:0,dayCosts:{fixed:0,variable:0,outsourcing:0,maintenance:0},employees:2,qualityInspectors:1,capacityBoost:0,maintenanceDone:false,stock,selectedSupply:'buy'};
+function resetState(){state={day:1,time:DAY_SECONDS,running:false,paused:false,cash:5000,strategy:'hibrida',orders:[],ops:[],transit:[],log:[],nextOrder:1,nextOp:1,stocks:{},reserved:{},stations:stations.map(()=>({job:null,queue:[],broken:false})),finished:[],stats:{received:0,accepted:0,refused:0,outsourced:0,delivered:0,late:0,componentCost:0,outsourcingCost:0,maintenanceCost:0,fixedCost:500,lostOpportunity:0,blockedStarts:0,checklists:0,starts:0,urgentFirst:0,nonUrgentBeforeUrgent:0,maxQueues:[0,0,0,0],blockedTime:0,finishedStockValue:0,produced:{urbana:0,esportiva:0},deliveredModels:{urbana:0,esportiva:0},pushedStarts:0}};
+Object.keys(parts).forEach(k=>{state.stocks[k]=Math.floor(parts[k].cap*.55);state.reserved[k]=0});state.stocks.corrente=6;state.stocks.rodasU=10;state.stocks.quadroU=6;}
+function startGame(){resetState();state.strategy=document.getElementById('strategy').value;document.getElementById('strategyLabel').textContent=strategyName(state.strategy);document.getElementById('setup').classList.add('hide');document.getElementById('game').classList.remove('hide');document.getElementById('pauseBtn').disabled=false;document.getElementById('endBtn').disabled=false;populateParts();renderSuppliers();log('Dia de produção iniciado. Estratégia declarada: '+strategyName(state.strategy)+'.');for(let i=0;i<3;i++) generateOrder();state.running=true;renderAll();}
+function strategyName(s){return {hibrida:'Híbrida',puxada:'Puxada',empurrada:'Empurrada',jit:'JIT'}[s]||s}
+function populateParts(){const sel=document.getElementById('partSelect');sel.innerHTML='';Object.keys(parts).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=parts[k].name;sel.appendChild(o)});}
+function log(msg){state.log.unshift(`<p><b>${fmtTime(DAY_SECONDS-state.time)}</b> — ${msg}</p>`);}
+function tick(){if(!state||!state.running||state.paused)return;state.time--; if(state.time<=0){finishDay();return} if(Math.random()<0.010 && state.orders.length<7)generateOrder();processTransit();processStations();autoDeliver();updateMaxQueues();renderAll();}
+setInterval(tick,1000);
+function generateOrder(){const model=Math.random()<.67?'urbana':'esportiva';const qty=Math.random()<.75?1:2;const deadline=state.time-(240+Math.floor(Math.random()*420));const id=String(state.nextOrder++).padStart(3,'0');const order={id,model,qty,deadline,status:'new',created:state.time,ops:[]};state.orders.push(order);state.stats.received++;log(`Novo pedido #${id}: ${qty} ${models[model].name}${qty>1?'s':''}, prazo ${fmtTime(Math.max(0,state.time-deadline))}.`);}
+function requiredBom(model,qty=1){const r={};Object.entries(models[model].bom).forEach(([k,v])=>r[k]=v*qty);return r;}
+function available(k){return state.stocks[k]-state.reserved[k]}
+function canReserve(model,qty){const bom=requiredBom(model,qty);return Object.keys(bom).every(k=>available(k)>=bom[k]);}
+function missingBom(model,qty){const bom=requiredBom(model,qty);return Object.entries(bom).filter(([k,v])=>available(k)<v).map(([k,v])=>({k,need:v,avail:available(k),missing:v-available(k)}));}
+function reserve(model,qty){const bom=requiredBom(model,qty);Object.entries(bom).forEach(([k,v])=>state.reserved[k]+=v);}
+function consumeForOp(op){const bom=requiredBom(op.model,1);Object.entries(bom).forEach(([k,v])=>{state.reserved[k]-=v;state.stocks[k]-=v;state.stats.componentCost+=avgCost(k)*v;});}
+function avgCost(k){return Math.round((parts[k].unit.eco+parts[k].unit.reg+parts[k].unit.pre)/3)}
+function acceptOrder(id){const order=state.orders.find(o=>o.id===id);if(!order||order.status!=='new')return;if(!canReserve(order.model,order.qty)){showChecklist({type:'order',id});log(`Pedido #${id} não aceito: faltam componentes.`);return}reserve(order.model,order.qty);order.status='accepted';state.stats.accepted++;for(let i=0;i<order.qty;i++){const op={id:`${order.id}.${i+1}`,orderId:order.id,model:order.model,deadline:order.deadline,stage:-1,status:'queue',created:state.time,started:null,finished:null,blockedReason:''};state.ops.push(op);order.ops.push(op.id);}log(`Pedido #${id} aceito. Gerou ${order.qty} OP(s) na fila inicial.`);renderAll();}
+function refuseOrder(id){const idx=state.orders.findIndex(o=>o.id===id);if(idx<0)return;const o=state.orders[idx];if(o.status!=='new')return;o.status='refused';state.stats.refused++;state.stats.lostOpportunity+=models[o.model].price*o.qty;log(`Pedido #${id} recusado. Receita potencial não realizada: ${fmtMoney(models[o.model].price*o.qty)}.`);renderAll();}
+function outsourceOrder(id){const o=state.orders.find(x=>x.id===id);if(!o||o.status!=='new')return;const revenue=models[o.model].price*o.qty;const cost=Math.round(revenue*.68);if(state.cash<cost){log(`Caixa insuficiente para terceirizar pedido #${id}.`);return}state.cash-=cost;state.stats.outsourcingCost+=cost;o.status='outsourced';state.stats.outsourced++;const arrive=Math.max(15,state.time-240);state.transit.push({kind:'outsourced',orderId:o.id,model:o.model,qty:o.qty,arrive});log(`Pedido #${id} terceirizado por ${fmtMoney(cost)}. Entrega prevista em 4 minutos.`);renderAll();}
+function startOp(opId){const op=state.ops.find(o=>o.id===opId);if(!op||op.status!=='queue')return;const urgentExists=state.ops.some(o=>o.status==='queue' && o.deadline>op.deadline);if(urgentExists)state.stats.nonUrgentBeforeUrgent++;else state.stats.urgentFirst++;
+  if(state.stations[0].job){log(`Não foi possível iniciar OP #${op.id}: estação Estrutura ocupada.`);return}
+  const miss=missingBom(op.model,1); if(miss.length){op.blockedReason=miss.map(m=>parts[m.k].name).join(', ');op.status='blocked';state.stats.blockedStarts++;log(`OP #${op.id} bloqueada: falta ${op.blockedReason}.`);showChecklist({type:'op',id:op.id});renderAll();return}
+  consumeForOp(op);op.status='working';op.stage=0;op.started=state.time;state.stations[0].job={opId:op.id,remaining:stations[0].time[op.model],total:stations[0].time[op.model]};state.stats.starts++;if(!state.orders.find(o=>o.id===op.orderId))state.stats.pushedStarts++;log(`OP #${op.id} entrou na linha: ${models[op.model].name}.`);renderAll();}
+function unblockOps(){state.ops.filter(o=>o.status==='blocked').forEach(op=>{if(missingBom(op.model,1).length===0){op.status='queue';op.blockedReason='';log(`OP #${op.id} desbloqueada: componentes disponíveis.`)}})}
+function processStations(){unblockOps();for(let i=0;i<state.stations.length;i++){const st=state.stations[i]; if(st.broken)continue; if(st.job){st.job.remaining--; if(st.job.remaining<=0)finishStation(i);} else if(st.queue.length){const opId=st.queue.shift();const op=state.ops.find(o=>o.id===opId);if(op){op.status='working';op.stage=i;st.job={opId,remaining:stations[i].time[op.model],total:stations[i].time[op.model]};log(`OP #${op.id} iniciou ${stations[i].name}.`)}}} // occasional quality retrabalho
+if(Math.random()<0.002){const i=Math.floor(Math.random()*3);state.stations[i].broken=true;log(`Problema de produção: estação ${stations[i].name} parou. Use conserto no painel da estação.`)}
 }
-function resetGame(){ if(!confirm('Resetar a fábrica?'))return; state=initialState(); render(); }
-state=initialState(); stationDefs.forEach(s=>state.stations[s.id]={busy:null,queue:[],broken:false,repairing:false});
-
-function startDay(){
-  state.factoryName=document.getElementById('factoryName').value||'Fábrica sem nome';
-  state.strategy=document.getElementById('strategy').value; state.priority=document.getElementById('priority').value; state.difficulty=document.getElementById('difficulty').value;
-  document.getElementById('setupPanel').style.display='none';
-  state.event=choice(events); state.running=true; state.paused=true; state.lastTick=Date.now(); state.time=1200;
-  state.stats={arrived:0,accepted:0,refused:0,delivered:0,late:0,lost:0,defects:0,rework:0,lineStop:0,ordersRevenue:0,opportunity:0,byModel:{urban:0,sport:0},outsourced:0};
-  state.dayCosts.fixed=calculateFixedCost(); state.dayCosts.variable=0; state.dayCosts.outsourcing=0; state.dayCosts.maintenance=0; state.investments=0; state.decisions=[]; state.log=[]; state.finished={urban:0,sport:0}; state.outsourced=[];
-  setNotice(); showEventModal(); render();
-}
-function calculateFixedCost(){return 650 + state.employees*230 + state.qualityInspectors*160 + state.capacityBoost*70;}
-function setNotice(){
-  const s={pull:'Puxada',push:'Empurrada',jit:'Just in Time',hybrid:'Híbrida'}[state.strategy];
-  document.getElementById('eventNotice').innerHTML=`<span><b>Evento:</b> ${state.event?state.event.name:'aguardando'} — ${state.event?state.event.desc:''}</span><span><b>Estratégia:</b> ${s}</span>`;
-}
-function showEventModal(){document.getElementById('eventModalContent').innerHTML=`<h3>${state.event.name}</h3><p>${state.event.desc}</p><p><b>Duração do dia:</b> 20 minutos.</p>`;document.getElementById('eventModal').classList.add('show')}
-function closeEventModal(){document.getElementById('eventModal').classList.remove('show');state.paused=false;state.lastTick=Date.now();}
-function togglePause(){ if(!state.running)return; state.paused=!state.paused; state.lastTick=Date.now(); render(); }
-function tick(){
-  if(state.running && !state.paused){
-    const now=Date.now(); const dt=Math.min(1,(now-state.lastTick)/1000); state.lastTick=now; state.time-=dt;
-    if(state.time<=0){state.time=0; endDay();}
-    updateOrders(dt); updateTransit(dt); updateStations(dt); maybeBreak(dt); render();
-  } else if(state.running) state.lastTick=Date.now();
-  requestAnimationFrame(tick);
-}
-requestAnimationFrame(tick);
-function difficultyFactor(){return {aprendiz:.78,gerente:1,pico:1.28}[state.difficulty]||1}
-function updateOrders(dt){
-  state.nextOrderIn-=dt;
-  const endFactor= state.time<180 ? 1.8 : 1;
-  if(state.nextOrderIn<=0){ addRandomOrder(); const base=rand(16,32)/(difficultyFactor()*(state.event?.demand||1)); state.nextOrderIn=base*endFactor; }
-  state.orders.forEach(o=>{ if(o.status==='accepted'||o.status==='waiting'){o.due-=dt;if(o.due<0&&!o.markedLate){o.markedLate=true; state.stats.late++;}} });
-}
-function addRandomOrder(){
-  if(state.orders.filter(o=>['waiting','accepted','production','ready'].includes(o.status)).length>10) return;
-  const model=Math.random()<.68?'urban':'sport'; const qty= state.difficulty==='pico'?rand(1,4):rand(1,3); const dueBase=(model==='urban'?360:470) + qty*80; const due=dueBase*(state.event?.patience||1);
-  const order={id:state.orderSeq++,model,qty,due,initialDue:due,status:'waiting',created:state.time,completed:0,ready:0,revenue:bikeDefs[model].price*qty};
-  state.orders.push(order); state.stats.arrived++; log(`Pedido #${order.id} chegou: ${qty} ${bikeDefs[model].name}.`);
-}
-function acceptOrder(id){ const o=state.orders.find(x=>x.id===id); if(!o||o.status!=='waiting')return; if(!canReserve(o)){alert('Componentes insuficientes disponíveis para reservar este pedido. Compre materiais, terceirize ou recuse.');return;} reserveBom(o); o.status='accepted'; state.stats.accepted++; state.decisions.push(`Aceitou pedido #${o.id} (${o.qty} ${bikeDefs[o.model].name}).`); enqueueUnits(o); render(); }
-function refuseOrder(id){ const o=state.orders.find(x=>x.id===id); if(!o||o.status!=='waiting')return; o.status='refused'; state.stats.refused++; state.stats.opportunity+=o.revenue; state.decisions.push(`Recusou pedido #${o.id}. Custo de oportunidade estimado: ${fmt(o.revenue)}.`); render(); }
-function bomFor(order){const bom={}; Object.entries(bikeDefs[order.model].bom).forEach(([k,v])=>bom[k]=v*order.qty); return bom;}
-function canReserve(order){return Object.entries(bomFor(order)).every(([k,v])=>state.stock[k].available>=v);}
-function reserveBom(order){Object.entries(bomFor(order)).forEach(([k,v])=>{state.stock[k].available-=v;state.stock[k].reserved+=v;});}
-function consumeUnit(model){Object.entries(bikeDefs[model].bom).forEach(([k,v])=>{state.stock[k].reserved-=v; state.dayCosts.variable+=unitCost(k,'reg')*v;});}
-function enqueueUnits(order){ for(let i=0;i<order.qty;i++){const unit={uid:`${order.id}-${i+1}`,orderId:order.id,model:order.model,stage:'base'}; state.stations.base.queue.push(unit);} }
-function unitCost(comp,supp){return compDefs[comp].cost[supp]||0}
-function updateTransit(dt){state.transit.forEach(t=>{t.left-=dt}); const arrived=state.transit.filter(t=>t.left<=0); state.transit=state.transit.filter(t=>t.left>0); arrived.forEach(t=>{const delay=Math.random()>t.reliability; if(delay&&!t.delayed){t.left=rand(45,120);t.delayed=true;state.transit.push(t);log(`Fornecedor ${supplierDefs[t.supplier].name} atrasou ${compDefs[t.comp].name}.`)} else {state.stock[t.comp].available=Math.min(state.stock[t.comp].cap,state.stock[t.comp].available+t.qty);log(`Compra chegou: ${t.qty} ${compDefs[t.comp].name}.`)}})}
-function updateStations(dt){
-  stationDefs.forEach(sd=>{const st=state.stations[sd.id]; if(st.broken)return; if(st.busy){st.busy.left-=dt; if(st.busy.left<=0)finishStation(sd.id);} });
-}
-function maybeBreak(dt){if(!state.running||state.paused||!state.event)return; const risk=.000035*(state.event.breakRisk||1)*(state.maintenanceDone?.55:1); if(Math.random()<risk*dt*60){const avail=stationDefs.map(s=>s.id).filter(id=>!state.stations[id].broken); if(avail.length){const id=choice(avail);state.stations[id].broken=true;log(`Quebra: ${stationDefs.find(s=>s.id===id).name} parou.`);}}}
-function stationTime(stage,model){let t=bikeDefs[model].times[stage]; t*= Math.max(.72,1-(state.employees-2)*.08); if(state.strategy==='push')t*=.95; if(state.strategy==='jit')t*=1.04; return Math.round(t);}
-function startStation(stage){const st=state.stations[stage]; if(!state.running||state.paused||st.broken||st.busy||!st.queue.length)return; const unit=st.queue.shift(); if(stage==='base') consumeUnit(unit.model); st.busy={unit,left:stationTime(stage,unit.model),total:stationTime(stage,unit.model)}; render();}
-function finishStation(stage){const st=state.stations[stage]; const unit=st.busy.unit; st.busy=null; const next={base:'wheels',wheels:'finish',finish:'quality',quality:null}[stage]; if(next){unit.stage=next; state.stations[next].queue.push(unit);} else {completeBike(unit);} }
-function completeBike(unit){ const o=state.orders.find(x=>x.id===unit.orderId); if(!o)return; o.completed++; state.finished[unit.model]++; state.stats.byModel[unit.model]++; if(o.completed>=o.qty){o.status='ready'; o.ready=state.time; deliverOrder(o.id);} }
-function deliverOrder(id){ const o=state.orders.find(x=>x.id===id); if(!o||o.status!=='ready')return; o.status='delivered'; state.stats.delivered++; state.stats.ordersRevenue+=o.revenue; state.cash+=o.revenue; state.finished[o.model]=Math.max(0,state.finished[o.model]-o.qty); log(`Pedido #${o.id} entregue. Receita ${fmt(o.revenue)}.`); }
-function buy(comp,supplier){ const qty=Number(document.getElementById(`qty_${comp}_${supplier}`).value)||0; if(qty<=0)return; const room=state.stock[comp].cap-state.stock[comp].available-state.stock[comp].reserved; if(qty>room){alert('Quantidade acima da capacidade disponível de estoque.');return;} const cost=qty*unitCost(comp,supplier); if(cost>state.cash){alert('Saldo insuficiente.');return;} state.cash-=cost; state.investments+=cost; const s=supplierDefs[supplier]; state.transit.push({comp,qty,supplier,left:s.lead,reliability:s.reliability,delayed:false,cost}); state.decisions.push(`Comprou ${qty} ${compDefs[comp].name} do fornecedor ${s.name} por ${fmt(cost)}.`); render(); }
-function outsource(orderId){ const o=state.orders.find(x=>x.id===orderId); if(!o||o.status!=='waiting')return; const fee=o.qty*(o.model==='urban'?180:260); if(fee>state.cash){alert('Saldo insuficiente para terceirizar.');return;} state.cash-=fee; state.dayCosts.outsourcing+=fee; state.investments+=fee; state.stats.outsourced+=o.qty; o.status='outsourced'; state.stats.accepted++; state.stats.ordersRevenue+=o.revenue; state.cash+=o.revenue; state.stats.delivered++; state.decisions.push(`Terceirizou pedido #${o.id} por ${fmt(fee)} e entregou com parceiro externo.`); log(`Pedido #${o.id} terceirizado e entregue.`); render(); }
-function repair(stage,type){const st=state.stations[stage]; if(!st.broken)return; const cost= type==='full'?300:150; if(cost>state.cash){alert('Saldo insuficiente.');return;} state.cash-=cost; state.dayCosts.maintenance+=cost; state.investments+=cost; st.broken=false; if(type==='simple'&&Math.random()<.35){setTimeout(()=>{if(state.running){st.broken=true;log(`Conserto simples falhou: ${stationDefs.find(s=>s.id===stage).name} quebrou novamente.`);render();}},15000)} state.decisions.push(`${type==='full'?'Conserto completo':'Conserto simples'} em ${stationDefs.find(s=>s.id===stage).name}: ${fmt(cost)}.`); render();}
-function doPreventive(){if(state.maintenanceDone)return; const cost=220; if(cost>state.cash){alert('Saldo insuficiente.');return;} state.cash-=cost; state.investments+=cost; state.dayCosts.maintenance+=cost; state.maintenanceDone=true; state.decisions.push(`Fez manutenção preventiva por ${fmt(cost)}.`); render();}
-function hireEmployee(){const cost=700;if(cost>state.cash)return alert('Saldo insuficiente.');state.cash-=cost;state.investments+=cost;state.employees++;state.decisions.push(`Contratou operador de produção por ${fmt(cost)}.`);render()}
-function expandStock(){const cost=900;if(cost>state.cash)return alert('Saldo insuficiente.');state.cash-=cost;state.investments+=cost;Object.values(state.stock).forEach(s=>s.cap+=5);state.decisions.push(`Ampliou almoxarifado por ${fmt(cost)}.`);render()}
-function addCapacity(){const cost=1200;if(cost>state.cash)return alert('Saldo insuficiente.');state.cash-=cost;state.investments+=cost;state.capacityBoost++;state.decisions.push(`Ampliou capacidade da linha por ${fmt(cost)}.`);render()}
-function showSupply(tab){state.selectedSupply=tab; document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active')); event?.target?.classList.add('active'); renderSupply();}
-function render(){renderMetrics();renderOrders();renderSupply();renderStock();renderStations();document.getElementById('pauseBtn').innerText=state.paused?'Continuar':'Pausar';}
-function renderMetrics(){ const m=document.getElementById('metrics'); const mm=Math.floor(state.time/60), ss=Math.floor(state.time%60).toString().padStart(2,'0'); m.innerHTML=`<span class="pill"><strong>Dia</strong> ${state.day}</span><span class="pill"><strong>Tempo</strong> ${mm}:${ss}</span><span class="pill"><strong>Caixa</strong> ${fmt(state.cash)}</span><span class="pill"><strong>Pedidos</strong> ${state.stats?state.stats.accepted:0}/${state.stats?state.stats.arrived:0}</span><span class="pill"><strong>Entregues</strong> ${state.stats?state.stats.delivered:0}</span><span class="pill"><strong>Estoque pronto</strong> U:${state.finished.urban} E:${state.finished.sport}</span>`; }
-function renderOrders(){ const box=document.getElementById('ordersBox'); if(!state.running){box.innerHTML='<div class="card">Inicie o dia para receber pedidos.</div>';return;} const active=state.orders.filter(o=>o.status!=='refused'&&o.status!=='delivered'&&o.status!=='outsourced').slice(-14); box.innerHTML=active.map(o=>{const due=Math.max(0,Math.floor(o.due)); const cls=due<90?'danger':due<180?'warn':''; return `<div class="card ${cls}"><div class="row"><b>#${o.id} — ${o.qty} ${bikeDefs[o.model].name}</b><span class="tag ${due<90?'urgent':'blue'}">Prazo ${Math.floor(due/60)}:${String(due%60).padStart(2,'0')}</span></div><small>Receita: ${fmt(o.revenue)} | Status: ${statusLabel(o.status)} | Produzidas: ${o.completed}/${o.qty}</small><div class="btnrow">${o.status==='waiting'?`<button class="mini ok-btn" onclick="acceptOrder(${o.id})">Aceitar</button><button class="mini danger-btn" onclick="refuseOrder(${o.id})">Recusar</button><button class="mini purple-btn" onclick="outsource(${o.id})">Terceirizar ${fmt(o.qty*(o.model==='urban'?180:260))}</button>`:''}</div></div>`}).join('')||'<div class="card">Sem pedidos ativos.</div>'; }
-function statusLabel(s){return {waiting:'aguardando decisão',accepted:'aceito / em produção',ready:'pronto',delivered:'entregue',refused:'recusado',outsourced:'terceirizado'}[s]||s}
-function renderSupply(){ const box=document.getElementById('supplyBox'); if(state.selectedSupply==='transit'){box.innerHTML=state.transit.map(t=>`<div class="card"><b>${t.qty} ${compDefs[t.comp].name}</b><br><small>Fornecedor ${supplierDefs[t.supplier].name} | chega em ${Math.ceil(t.left)}s ${t.delayed?'| atrasado':''}</small></div>`).join('')||'<div class="card">Nenhuma compra em trânsito.</div>';return;}
- if(state.selectedSupply==='outsourcing'){box.innerHTML='<div class="card"><b>Terceirização</b><p><small>Use nos pedidos de clientes. A terceirização aumenta o custo, mas pode preservar prazo e liberar sua linha. O relatório registra custo de oportunidade, terceirização e impactos em margem.</small></p></div>';return;}
- box.innerHTML=Object.keys(compDefs).map(comp=>`<div class="card"><div class="row"><b>${compDefs[comp].name}</b><span class="tag ${compDefs[comp].critical==='Alta'?'urgent':'blue'}">Criticidade ${compDefs[comp].critical}</span></div><small>Estoque: ${state.stock[comp].available} disponível | ${state.stock[comp].reserved} reservado | cap. ${state.stock[comp].cap}</small>${Object.keys(supplierDefs).map(s=>{const sup=supplierDefs[s];return `<div class="listline"><span>${sup.name}</span><span>${fmt(unitCost(comp,s))}/un. • ${Math.round(sup.lead/60)} min • conf. ${Math.round(sup.reliability*100)}%</span><span><input style="width:54px" id="qty_${comp}_${s}" type="number" min="0" value="0"></span></div><button class="mini" onclick="buy('${comp}','${s}')">Comprar deste fornecedor</button>`}).join('')}</div>`).join(''); }
-function renderStock(){ const box=document.getElementById('stockBox'); box.innerHTML=Object.keys(compDefs).map(k=>{const s=state.stock[k], total=s.available+s.reserved, free=Math.max(0,s.cap-total); const pa=s.available/s.cap*100,pb=s.reserved/s.cap*100,pc=free/s.cap*100; return `<div class="stockItem"><h3>${compDefs[k].name}</h3><div class="bar"><div class="segA" style="width:${pa}%"></div><div class="segB" style="width:${pb}%"></div><div class="segC" style="width:${pc}%"></div></div><div class="legend"><span><i class="sq segA"></i>disp. ${s.available}</span><span><i class="sq segB"></i>res. ${s.reserved}</span><span><i class="sq segC"></i>livre ${free}</span></div></div>`}).join(''); }
-function renderStations(){ const box=document.getElementById('stationsBox'); box.innerHTML=stationDefs.map(sd=>{const st=state.stations[sd.id]; const pct=st.busy?clamp((1-st.busy.left/st.busy.total)*100,0,100):0; return `<div class="station ${st.broken?'broken':''}"><h3>${sd.name}</h3><small>${sd.desc}</small>${st.broken?'<div class="tag urgent">QUEBRADA</div>':''}<div class="progressBox"><div class="progressFill" style="height:${pct}%"></div><div class="progressText">${st.busy?`${Math.ceil(st.busy.left)}s`:(st.broken?'PARADA':'LIVRE')}</div></div><small>Fila: ${st.queue.length}</small>${st.busy?`<br><small>OP #${st.busy.unit.orderId} — ${bikeDefs[st.busy.unit.model].name}</small>`:''}<div class="btnrow"><button class="mini ok-btn" onclick="startStation('${sd.id}')" ${(!st.queue.length||st.busy||st.broken||state.paused)?'disabled':''}>Start</button>${st.broken?`<button class="mini warn-btn" onclick="repair('${sd.id}','simple')">Conserto simples R$150</button><button class="mini danger-btn" onclick="repair('${sd.id}','full')">Consertar R$300</button>`:''}</div></div>`}).join(''); }
-function log(msg){state.log.unshift(`[${Math.floor(state.time/60)}:${String(Math.floor(state.time%60)).padStart(2,'0')}] ${msg}`); state.log=state.log.slice(0,25)}
-function openManager(){ if(state.running){state.paused=true;} const c=document.getElementById('managerContent'); c.innerHTML=`<div class="twoCol"><div class="card"><h3>Decisões estruturais</h3><p><small>Caixa: ${fmt(state.cash)}</small></p><div class="btnrow"><button onclick="hireEmployee()">Contratar operador — R$ 700</button><button onclick="expandStock()">Ampliar almoxarifado — R$ 900</button><button onclick="addCapacity()">Ampliar capacidade — R$ 1.200</button><button onclick="doPreventive()" ${state.maintenanceDone?'disabled':''}>Manutenção preventiva — R$ 220</button></div></div><div class="card"><h3>Fila das estações</h3>${stationDefs.map(sd=>`<p><b>${sd.name}</b>: ${state.stations[sd.id].queue.length} na fila ${state.stations[sd.id].broken?'— QUEBRADA':''}</p>`).join('')}</div><div class="card"><h3>Pedidos ativos</h3>${state.orders.filter(o=>['waiting','accepted','ready'].includes(o.status)).map(o=>`<p>#${o.id} ${o.qty} ${bikeDefs[o.model].name} — ${statusLabel(o.status)}</p>`).join('')||'<p>Sem pedidos ativos.</p>'}</div><div class="card"><h3>Log recente</h3>${state.log.map(x=>`<p><small>${x}</small></p>`).join('')||'<p>Sem eventos.</p>'}</div></div>`;document.getElementById('managerModal').classList.add('show')}
-function closeManager(){document.getElementById('managerModal').classList.remove('show')}
-function openConcepts(){document.getElementById('conceptsModal').classList.add('show')}
-function closeConcepts(){document.getElementById('conceptsModal').classList.remove('show')}
-function endDay(){ if(!state.running)return; state.running=false; state.paused=true; state.cash-=state.dayCosts.fixed; state.dayCosts.fixedPaid=true; buildReport(); document.getElementById('reportModal').classList.add('show'); render(); }
-function buildReport(){ const revenue=state.stats.ordersRevenue; const costs=state.dayCosts.fixed+state.dayCosts.variable+state.dayCosts.outsourcing+state.dayCosts.maintenance; const beforeTax=revenue-costs-state.investments; const tax=beforeTax>0?beforeTax*.2:0; const net=beforeTax-tax; const bestModel= state.stats.byModel.urban===state.stats.byModel.sport?'Empate':(state.stats.byModel.urban>state.stats.byModel.sport?'Bike Urbana':'Bike Esportiva'); const scores=scoreObjectives();
- document.getElementById('reportContent').innerHTML=`<h1>${state.factoryName} — Relatório do Dia ${state.day}</h1><p class="muted">Fábrica de Bicicletas — Simulador de Gestão de Operações Industriais.</p><h2>1. Identificação</h2><table><tr><th>Evento</th><td>${state.event.name} — ${state.event.desc}</td></tr><tr><th>Estratégia</th><td>${{pull:'Puxada',push:'Empurrada',jit:'Just in Time',hybrid:'Híbrida'}[state.strategy]}</td></tr><tr><th>Prioridade</th><td>${state.priority}</td></tr><tr><th>Dificuldade</th><td>${state.difficulty}</td></tr></table><h2>2. Resultado operacional</h2><table><tr><th>Pedidos recebidos</th><td>${state.stats.arrived}</td><th>Aceitos</th><td>${state.stats.accepted}</td></tr><tr><th>Entregues</th><td>${state.stats.delivered}</td><th>Recusados</th><td>${state.stats.refused}</td></tr><tr><th>Atrasados</th><td>${state.stats.late}</td><th>Terceirizadas</th><td>${state.stats.outsourced}</td></tr><tr><th>Modelo mais produzido</th><td colspan="3">${bestModel}</td></tr></table><h2>3. Produção por modelo</h2>${barChart([{n:'Urbana',v:state.stats.byModel.urban},{n:'Esportiva',v:state.stats.byModel.sport}])}<h2>4. Estoques do dia</h2><h3>Componentes</h3><table><tr><th>Componente</th><th>Disponível</th><th>Reservado</th><th>Capacidade</th></tr>${Object.keys(compDefs).map(k=>`<tr><td>${compDefs[k].name}</td><td>${state.stock[k].available}</td><td>${state.stock[k].reserved}</td><td>${state.stock[k].cap}</td></tr>`).join('')}</table><h3>Produto acabado / material pronto</h3><table><tr><th>Produto acabado</th><th>Quantidade</th><th>Situação</th></tr><tr><td>Bike Urbana pronta</td><td>${state.finished.urban}</td><td>Disponível para venda/entrega futura</td></tr><tr><td>Bike Esportiva pronta</td><td>${state.finished.sport}</td><td>Disponível para venda/entrega futura</td></tr></table><h2>5. Demonstração gerencial</h2><table><tr><th>Receita de vendas</th><td>${fmt(revenue)}</td></tr><tr><th>(-) Custos variáveis de produção</th><td>${fmt(state.dayCosts.variable)}</td></tr><tr><th>(-) Custos fixos do dia</th><td>${fmt(state.dayCosts.fixed)}</td></tr><tr><th>(-) Terceirização</th><td>${fmt(state.dayCosts.outsourcing)}</td></tr><tr><th>(-) Manutenção</th><td>${fmt(state.dayCosts.maintenance)}</td></tr><tr><th>(-) Investimentos e compras</th><td>${fmt(state.investments)}</td></tr><tr><th>(=) Resultado antes dos impostos</th><td>${fmt(beforeTax)}</td></tr><tr><th>(-) Impostos projetados — 20%</th><td>${fmt(tax)}</td></tr><tr><th>(=) Lucro líquido projetado</th><td>${fmt(net)}</td></tr></table><p class="muted">O imposto é projeção relatorial. O caixa do jogo considera entradas e saídas operacionais/investimentos.</p><h2>6. Decisões tomadas</h2>${state.decisions.length?`<ul>${state.decisions.map(d=>`<li>${d}</li>`).join('')}</ul>`:'<p>Nenhuma decisão registrada.</p>'}<h2>7. Balanço estratégico</h2><table><tr><th>Objetivo</th><th>Pontuação</th></tr>${Object.entries(scores).map(([k,v])=>`<tr><td>${k}</td><td>${v}/100</td></tr>`).join('')}</table><p><b>Síntese:</b> ${strategicSummary(scores)}</p><h2>8. Recomendações</h2><ul>${recommendations().map(r=>`<li>${r}</li>`).join('')}</ul>`; }
-function barChart(rows){const max=Math.max(1,...rows.map(r=>r.v));return `<table>${rows.map(r=>`<tr><td style="width:110px">${r.n}</td><td><div class="chartbar" style="width:${Math.max(3,r.v/max*100)}%"></div></td><td style="width:45px">${r.v}</td></tr>`).join('')}</table>`}
-function scoreObjectives(){ const st=state.stats; return {Custo:clamp(Math.round(100-(state.dayCosts.variable+state.dayCosts.fixed+state.dayCosts.outsourcing+state.investments)/120),35,100),Rapidez:clamp(100-st.late*12-state.orders.filter(o=>o.status==='accepted').length*6,30,100),Confiabilidade:clamp(100-st.refused*4-st.late*10,30,100),Qualidade:clamp(96-st.defects*10-st.rework*6,40,100),Flexibilidade:clamp(70+st.outsourced*5+(state.stats.byModel.urban>0&&state.stats.byModel.sport>0?15:0),40,100)} }
-function strategicSummary(scores){ const entries=Object.entries(scores).sort((a,b)=>b[1]-a[1]); return `Melhor desempenho em ${entries[0][0]} (${entries[0][1]}/100). Ponto crítico em ${entries.at(-1)[0]} (${entries.at(-1)[1]}/100). Compare essa leitura com a prioridade escolhida: ${state.priority}.`; }
-function recommendations(){ const rec=[]; const critical=Object.keys(state.stock).filter(k=>state.stock[k].available<Math.max(2,Math.floor(state.stock[k].cap*.18))); if(critical.length)rec.push(`Repor itens críticos: ${critical.map(k=>compDefs[k].name).join(', ')}.`); if(state.stats.late>0)rec.push('Reavaliar sequenciamento e fornecedores para reduzir atrasos.'); if(state.stats.outsourced>0)rec.push('Comparar custo da terceirização com o custo de oportunidade dos pedidos urgentes.'); if(state.transit.length)rec.push('Acompanhar compras em trânsito antes de aceitar pedidos dependentes desses componentes.'); if(!rec.length)rec.push('Operação equilibrada. Use os dados do dia para planejar o próximo mix de estoque e capacidade.'); return rec; }
-function printReport(){document.getElementById('reportModal').classList.add('printModal'); window.print(); setTimeout(()=>document.getElementById('reportModal').classList.remove('printModal'),500)}
-function closeReport(){document.getElementById('reportModal').classList.remove('show')}
-function nextDay(){closeReport(); state.day++; state.running=false; state.paused=false; state.orders=[]; state.transit=state.transit; stationDefs.forEach(s=>{state.stations[s.id]={busy:null,queue:[],broken:false,repairing:false}}); document.getElementById('setupPanel').style.display='block'; render();}
-render();
+function finishStation(i){const st=state.stations[i];const op=state.ops.find(o=>o.id===st.job.opId);st.job=null;if(!op)return;if(i<state.stations.length-1){op.status='waiting';op.stage=i+1;state.stations[i+1].queue.push(op.id);log(`OP #${op.id} concluiu ${stations[i].name} e aguarda ${stations[i+1].name}.`)}else{op.status='finished';op.finished=state.time;state.finished.push(op.id);state.stats.produced[op.model]++;log(`OP #${op.id} finalizada e enviada para produto acabado.`)} }
+function deliverOrder(orderId){const o=state.orders.find(x=>x.id===orderId);if(!o||!['accepted','outsourced'].includes(o.status))return;const allReady=o.status==='outsourced'?false:o.ops.every(id=>state.finished.includes(id));if(!allReady){log(`Pedido #${orderId} ainda não está completo para expedição.`);return}o.status='delivered';const revenue=models[o.model].price*o.qty;state.cash+=revenue;state.stats.delivered++;state.stats.deliveredModels[o.model]+=o.qty;if(state.time<o.deadline)state.stats.late++;o.ops.forEach(id=>{const ix=state.finished.indexOf(id);if(ix>=0)state.finished.splice(ix,1)});log(`Pedido #${orderId} entregue. Receita: ${fmtMoney(revenue)}${state.time<o.deadline?' com atraso.':'.'}`);renderAll();}
+function autoDeliver(){state.orders.filter(o=>o.status==='outsourced').forEach(o=>{const t=state.transit.find(x=>x.kind==='outsourced'&&x.orderId===o.id);});}
+function processTransit(){for(let i=state.transit.length-1;i>=0;i--){const t=state.transit[i];if(state.time<=t.arrive){if(t.kind==='part'){let delayed=false;if(!t.delayed && Math.random()>suppliers[t.supplier].reliability){t.arrive-=90;t.delayed=true;delayed=true;log(`Fornecedor ${suppliers[t.supplier].name} atrasou entrega de ${parts[t.part].name} em 1min30s.`)}if(delayed)continue;state.stocks[t.part]=Math.min(parts[t.part].cap,state.stocks[t.part]+t.qty);log(`Chegou compra: ${t.qty} × ${parts[t.part].name}.`);state.transit.splice(i,1)}else if(t.kind==='outsourced'){const o=state.orders.find(x=>x.id===t.orderId);if(o&&o.status==='outsourced'){o.status='delivered';const revenue=models[o.model].price*o.qty;state.cash+=revenue;state.stats.delivered++;state.stats.deliveredModels[o.model]+=o.qty;if(state.time<o.deadline)state.stats.late++;log(`Pedido terceirizado #${o.id} foi entregue. Receita: ${fmtMoney(revenue)}.`)}state.transit.splice(i,1)}}}}
+function buyPart(){const part=document.getElementById('partSelect').value;const sup=document.getElementById('supplierSelect').value;let qty=parseInt(document.getElementById('qtyBuy').value||'0');if(qty<=0)return;const space=parts[part].cap-state.stocks[part];qty=Math.min(qty,space);if(qty<=0){log(`Almoxarifado cheio para ${parts[part].name}.`);return}const cost=parts[part].unit[sup]*qty;if(state.cash<cost){log(`Caixa insuficiente para comprar ${qty} × ${parts[part].name}.`);return}state.cash-=cost;state.transit.push({kind:'part',part,supplier:sup,qty,arrive:state.time-suppliers[sup].lead,delayed:false,cost});log(`Compra realizada: ${qty} × ${parts[part].name} com fornecedor ${suppliers[sup].name}. Prazo: ${fmtTime(suppliers[sup].lead)}.`);renderAll();}
+function repairStation(i,type){const st=state.stations[i];if(!st.broken)return;const cost=type==='full'?300:150;if(state.cash<cost){log('Caixa insuficiente para conserto.');return}state.cash-=cost;state.stats.maintenanceCost+=cost;if(type==='full'||Math.random()<.72){st.broken=false;log(`Estação ${stations[i].name} consertada.`)}else{log(`Conserto simples falhou na estação ${stations[i].name}.`) }renderAll();}
+function togglePause(){state.paused=!state.paused;document.getElementById('pauseBtn').textContent=state.paused?'Retomar':'Pausar';document.getElementById('pauseOverlay').style.display=state.paused?'block':'none';}
+function updateMaxQueues(){state.stations.forEach((s,i)=>state.stats.maxQueues[i]=Math.max(state.stats.maxQueues[i],s.queue.length));state.stats.blockedTime+=state.ops.filter(o=>o.status==='blocked').length;}
+function renderAll(){document.getElementById('day').textContent=state.day;document.getElementById('time').textContent=fmtTime(state.time);document.getElementById('cash').textContent=fmtMoney(state.cash);document.getElementById('ordersCount').textContent=state.orders.filter(o=>['new','accepted','outsourced'].includes(o.status)).length;renderOrders();renderStock();renderLine();renderTransit();document.getElementById('log').innerHTML=state.log.join('');}
+function renderOrders(){const el=document.getElementById('orders');el.innerHTML='';state.orders.filter(o=>o.status!=='refused'&&o.status!=='delivered').forEach(o=>{const d=state.time-o.deadline;const deadCls=d>240?'ok':d>90?'warn':'bad';const div=document.createElement('div');div.className='card order';const miss=missingBom(o.model,o.qty);div.innerHTML=`<h3>#${o.id} — ${o.qty} ${models[o.model].icon} ${models[o.model].name}</h3><span class="badge deadline ${deadCls}">Prazo restante: ${fmtTime(d)}</span><span class="badge">Receita ${fmtMoney(models[o.model].price*o.qty)}</span><div class="bom">${Object.entries(requiredBom(o.model,o.qty)).map(([k,v])=>`<span class="${available(k)>=v?'okitem':'missing'}">${parts[k].name}: ${available(k)}/${v}</span>`).join('')}</div><div class="op-actions">${o.status==='new'?`<button class="good" onclick="acceptOrder('${o.id}')">Aceitar</button><button class="bad" onclick="refuseOrder('${o.id}')">Recusar</button><button class="warn" onclick="outsourceOrder('${o.id}')">Terceirizar</button>`:`<button class="primary" onclick="deliverOrder('${o.id}')">Entregar pedido</button>`}<button onclick="showChecklist({type:'order',id:'${o.id}'})">Checklist</button></div><div class="mini">Status: ${statusLabel(o.status)} ${miss.length?' | faltas: '+miss.map(m=>parts[m.k].name).join(', '):''}</div>`;el.appendChild(div)});}
+function statusLabel(s){return {new:'aguardando decisão',accepted:'em produção',outsourced:'terceirizado',delivered:'entregue',refused:'recusado'}[s]||s}
+function renderStock(){const el=document.getElementById('stock');el.innerHTML='';Object.keys(parts).forEach(k=>{const pct=Math.round((state.stocks[k]/parts[k].cap)*100);const avail=available(k);const div=document.createElement('div');div.className='stock';div.innerHTML=`<strong>${parts[k].name}</strong><div class="mini">Criticidade: ${parts[k].critical}</div><div class="mini">Disponível: <b>${avail}</b> | Reservado: <b>${state.reserved[k]}</b> | Cap.: ${parts[k].cap}</div><div class="meter"><span class="${pct<25?'low':pct<50?'med':''}" style="width:${pct}%"></span></div>`;el.appendChild(div)});}
+function renderLine(){document.getElementById('initialQueue').innerHTML=state.ops.filter(o=>o.status==='queue'||o.status==='blocked').map(o=>opHtml(o,true)).join('')||'<div class="muted">Sem OP inicial.</div>';state.stations.forEach((st,i)=>{const status=document.getElementById(`st${i}status`);const job=document.getElementById(`st${i}job`);const q=document.getElementById(`st${i}queue`);if(st.broken){status.className='status blocked';status.innerHTML=`Quebrada <button class="bad" onclick="repairStation(${i},'simple')">Conserto R$150</button> <button class="warn" onclick="repairStation(${i},'full')">Completo R$300</button>`;}else if(st.job){const op=state.ops.find(o=>o.id===st.job.opId);status.className='status working';status.textContent=`Produzindo ${op?op.id:''} — ${fmtTime(st.job.remaining)}`;job.innerHTML=`<div class="opchip">${op?models[op.model].icon:''} OP #${st.job.opId}<div class="progress"><div class="bar" style="width:${100-(st.job.remaining/st.job.total*100)}%"></div></div></div>`;}else{status.className='status free';status.textContent='Livre';job.innerHTML='';}q.innerHTML=st.queue.map(id=>{const op=state.ops.find(o=>o.id===id);return opHtml(op,false)}).join('')||'<div class="muted">Sem fila.</div>';});document.getElementById('finished').innerHTML=state.finished.map(id=>{const op=state.ops.find(o=>o.id===id);return `<div class="opchip">${models[op.model].icon} OP #${id}<br><span class="mini">${models[op.model].name}</span></div>`}).join('')||'<div class="muted">Nenhum produto acabado.</div>'}
+function opHtml(op,actions){if(!op)return'';const urgent=(state.time-op.deadline)<150;return `<div class="opchip ${urgent?'urgent':''} ${op.status==='blocked'?'blocked':''}">${models[op.model].icon} OP #${op.id}<br><span class="mini">${models[op.model].name} | prazo ${fmtTime(state.time-op.deadline)}</span>${op.status==='blocked'?`<br><span>Bloqueada: ${op.blockedReason}</span>`:''}${actions?`<div class="op-actions"><button class="primary" onclick="startOp('${op.id}')">Iniciar produção</button><button onclick="showChecklist({type:'op',id:'${op.id}'})">Checklist</button></div>`:''}</div>`}
+function renderSuppliers(){const el=document.getElementById('supplierInfo');el.innerHTML=Object.keys(suppliers).map(s=>`<div class="supplier"><h3>${suppliers[s].name}</h3><div class="mini">${suppliers[s].label}</div><div>Prazo: <b>${fmtTime(suppliers[s].lead)}</b></div><div>Confiabilidade: <b>${Math.round(suppliers[s].reliability*100)}%</b></div></div>`).join('');}
+function renderTransit(){const el=document.getElementById('transit');el.innerHTML=state.transit.map(t=>t.kind==='part'?`<div class="transit">${t.qty} × ${parts[t.part].name} — ${suppliers[t.supplier].name} — chega em ${fmtTime(t.arrive-state.time)}${t.delayed?' — atrasado':''}</div>`:`<div class="transit">Pedido terceirizado #${t.orderId} — chega em ${fmtTime(t.arrive-state.time)}</div>`).join('')||'<div class="muted">Nenhuma compra em trânsito.</div>';}
+function showChecklist(ref){state.stats.checklists++;let title='',model='',qty=1,deadline=state.time,kind='';if(ref.type==='order'){const o=state.orders.find(x=>x.id===ref.id);if(!o)return;title=`Pedido #${o.id}`;model=o.model;qty=o.qty;deadline=o.deadline;kind=statusLabel(o.status);}else{const op=state.ops.find(x=>x.id===ref.id);if(!op)return;title=`OP #${op.id}`;model=op.model;qty=1;deadline=op.deadline;kind=op.status;}const miss=missingBom(model,qty);const bom=requiredBom(model,qty);const lines=Object.entries(bom).map(([k,v])=>`<div class="check ${available(k)>=v?'ok':'no'}"><span>${available(k)>=v?'✔':'✘'} ${parts[k].name}</span><span>${available(k)} disp. / ${v} nec.</span></div>`).join('');const status=miss.length?`BLOQUEADA — faltam ${miss.map(m=>m.missing+' '+parts[m.k].name).join(', ')}`:'PRONTA PARA LIBERAÇÃO';document.getElementById('checklist').innerHTML=`<h3>📝 Checklist de liberação</h3><p><b>${title}</b><br>${models[model].icon} ${models[model].name} ${qty>1?'× '+qty:''}<br>Prazo restante: ${fmtTime(state.time-deadline)}<br>Status atual: ${kind}</p>${lines}<p><b>Status da análise:</b><br>${status}</p><p class="mini">Use este checklist para verificar material, risco de bloqueio e coerência antes de liberar produção.</p>`;}
+function finishDay(){if(!state||!state.running)return;state.running=false;document.getElementById('pauseBtn').disabled=true;document.getElementById('endBtn').disabled=true;document.getElementById('pauseOverlay').style.display='none';const unfinished=state.orders.filter(o=>['new','accepted','outsourced'].includes(o.status));unfinished.forEach(o=>{if(o.status==='new')state.stats.lostOpportunity+=models[o.model].price*o.qty});state.cash-=state.stats.fixedCost;const beforeTax=state.cash-5000;const tax=Math.max(0,beforeTax*.2);const net=beforeTax-tax;state.stats.finishedStockValue=state.finished.reduce((sum,id)=>{const op=state.ops.find(o=>o.id===id);return sum+(op?models[op.model].price:0)},0);document.getElementById('report').innerHTML=buildReport(beforeTax,tax,net);document.getElementById('reportModal').style.display='flex';}
+function coherence(){let score=70,notes=[];const finishedCount=state.finished.length;const totalStock=Object.values(state.stocks).reduce((a,b)=>a+b,0);const accepted=state.stats.accepted||1;if(state.strategy==='puxada'){if(finishedCount>2){score-=20;notes.push('houve formação de produto acabado sem entrega imediata');}if(state.stats.accepted>0)notes.push('as OPs nasceram a partir de pedidos reais');}
+if(state.strategy==='empurrada'){if(finishedCount>0)notes.push('houve estoque de produto acabado para resposta futura');else{score-=20;notes.push('não houve formação relevante de produto acabado');}}
+if(state.strategy==='jit'){if(totalStock>95){score-=20;notes.push('estoque final elevado para uma lógica JIT');}if(state.stats.blockedStarts>0){score-=15;notes.push('faltas de componentes bloquearam OPs');}}
+if(state.strategy==='hibrida'){if(state.stats.blockedStarts>0)score-=10;if(finishedCount>4)score-=10;notes.push('a análise considera equilíbrio entre componentes disponíveis e montagem por pedido');}
+if(state.stats.nonUrgentBeforeUrgent>state.stats.urgentFirst)score-=10;return {score:Math.max(0,Math.min(100,score)),notes:notes.join('; ')||'decisões razoavelmente alinhadas à estratégia declarada'};}
+function buildReport(beforeTax,tax,net){const c=coherence();const opCosts=state.stats.componentCost+state.stats.outsourcingCost+state.stats.maintenanceCost+state.stats.fixedCost;const deliveredRevenue=state.stats.deliveredModels.urbana*models.urbana.price+state.stats.deliveredModels.esportiva*models.esportiva.price;const bottleneck=state.stats.maxQueues.map((v,i)=>({v,i})).sort((a,b)=>b.v-a.v)[0];return `<h2>Relatório Gerencial — Dia de Produção ${state.day}</h2>
+<div class="reportBlock"><h3>1. Identificação e estratégia</h3><p><b>Estratégia produtiva declarada:</b> ${strategyName(state.strategy)}<br><b>Coerência observada:</b> ${c.score}/100 — ${c.notes}.</p></div>
+<div class="reportGrid"><div class="reportBlock"><h3>2. Resultado operacional</h3><table><tr><td>Pedidos recebidos</td><td>${state.stats.received}</td></tr><tr><td>Aceitos</td><td>${state.stats.accepted}</td></tr><tr><td>Recusados</td><td>${state.stats.refused}</td></tr><tr><td>Terceirizados</td><td>${state.stats.outsourced}</td></tr><tr><td>Entregues</td><td>${state.stats.delivered}</td></tr><tr><td>Entregues com atraso</td><td>${state.stats.late}</td></tr></table></div>
+<div class="reportBlock"><h3>3. Receita</h3><table><tr><td>Bikes urbanas entregues</td><td>${state.stats.deliveredModels.urbana} × ${fmtMoney(models.urbana.price)}</td></tr><tr><td>Bikes esportivas entregues</td><td>${state.stats.deliveredModels.esportiva} × ${fmtMoney(models.esportiva.price)}</td></tr><tr><th>Receita realizada</th><th>${fmtMoney(deliveredRevenue)}</th></tr><tr><td>Receita potencial perdida</td><td>${fmtMoney(state.stats.lostOpportunity)}</td></tr></table></div></div>
+<div class="reportBlock"><h3>4. Custos e resultado</h3><table><tr><td>Custos variáveis de componentes consumidos</td><td>${fmtMoney(state.stats.componentCost)}</td></tr><tr><td>Terceirização</td><td>${fmtMoney(state.stats.outsourcingCost)}</td></tr><tr><td>Manutenção/consertos</td><td>${fmtMoney(state.stats.maintenanceCost)}</td></tr><tr><td>Custos fixos do dia</td><td>${fmtMoney(state.stats.fixedCost)}</td></tr><tr><th>Total de custos operacionais</th><th>${fmtMoney(opCosts)}</th></tr><tr><td>Resultado antes dos impostos projetados</td><td>${fmtMoney(beforeTax)}</td></tr><tr><td>Impostos projetados — 20%</td><td>${fmtMoney(tax)}</td></tr><tr><th>Lucro líquido projetado</th><th>${fmtMoney(net)}</th></tr></table><p class="mini">Os impostos são projeção relatorial; o caixa do jogo considera receitas, compras, terceirização, manutenção e custo fixo.</p></div>
+<div class="reportBlock"><h3>5. Componentes, estoques e produto acabado</h3><table><tr><th>Componente</th><th>Disponível</th><th>Reservado</th><th>Capacidade</th></tr>${Object.keys(parts).map(k=>`<tr><td>${parts[k].name}</td><td>${available(k)}</td><td>${state.reserved[k]}</td><td>${parts[k].cap}</td></tr>`).join('')}</table><p><b>Produto acabado em estoque:</b> ${state.finished.length} bicicleta(s), valor potencial de venda ${fmtMoney(state.stats.finishedStockValue)}.</p><p><b>Produtos em processo:</b> ${state.ops.filter(o=>['working','waiting'].includes(o.status)).length} OP(s).</p></div>
+<div class="reportBlock"><h3>6. Fornecedores, filas e sequenciamento</h3><table><tr><td>Compras ainda em trânsito</td><td>${state.transit.filter(t=>t.kind==='part').length}</td></tr><tr><td>OPs bloqueadas por falta de estoque</td><td>${state.ops.filter(o=>o.status==='blocked').length}</td></tr><tr><td>Tentativas bloqueadas no Start</td><td>${state.stats.blockedStarts}</td></tr><tr><td>Gargalo observado</td><td>${stations[bottleneck.i].name} — maior fila: ${bottleneck.v}</td></tr><tr><td>Decisões de checklist consultadas</td><td>${state.stats.checklists}</td></tr><tr><td>Inícios de produção</td><td>${state.stats.starts}</td></tr></table></div>
+<div class="reportBlock"><h3>7. Balanço estratégico dos objetivos de desempenho</h3><table><tr><th>Objetivo</th><th>Leitura do dia</th></tr><tr><td>Custo</td><td>${state.stats.outsourcingCost>0?'A terceirização elevou custos, mas pode ter evitado perda de receita.':'Menor uso de terceirização; atenção ao custo fixo e estoque parado.'}</td></tr><tr><td>Rapidez</td><td>${state.stats.late>0?'Houve atraso em entregas; avaliar sequenciamento e fornecedores.':'Entregas sem atraso relevante ou operação ainda incompleta.'}</td></tr><tr><td>Confiabilidade</td><td>${state.stats.blockedStarts>0?'Faltas de componentes prejudicaram a confiabilidade do plano.':'Poucos bloqueios por falta de material.'}</td></tr><tr><td>Qualidade</td><td>${state.stats.maintenanceCost>0?'Houve intervenção em estação; monitorar estabilidade do processo.':'Sem grandes ocorrências de manutenção registradas.'}</td></tr><tr><td>Flexibilidade</td><td>${state.stats.outsourced>0?'Uso de terceirização ampliou resposta da operação.':'Flexibilidade dependeu basicamente do estoque e sequenciamento interno.'}</td></tr></table></div>
+<div class="reportBlock"><h3>8. Recomendações para o próximo dia</h3><p>${recommendations()}</p></div>
+<p class="mini">Sistema desenvolvido para a disciplina Gestão de Operações e Serviços, Professor Me. Luan Sodré da UNIVALE.</p>`;}
+function recommendations(){let rec=[];if(state.stats.blockedStarts>0)rec.push('Reforce o planejamento de componentes críticos antes de aceitar e liberar OPs.');if(state.stats.late>0)rec.push('Priorize OPs com menor prazo e acompanhe filas antes de iniciar novas ordens.');if(state.finished.length>3)rec.push('Há produto acabado parado; avalie se a estratégia declarada comporta esse nível de estoque pronto.');if(state.transit.length>0)rec.push('Considere o prazo dos fornecedores: compras lentas podem não resolver falta imediata.');if(!rec.length)rec.push('Continue comparando pedidos, estoque e filas antes de iniciar produção.');return rec.join(' ')}
+function closeReport(){document.getElementById('reportModal').style.display='none'}
+function nextDay(){document.getElementById('reportModal').style.display='none';document.getElementById('setup').classList.remove('hide');document.getElementById('game').classList.add('hide');document.getElementById('pauseBtn').textContent='Pausar';}
 </script>
 </body>
 </html>
