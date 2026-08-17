@@ -438,6 +438,143 @@ function buildReport(beforeTax,tax,net){const c=coherence();const opCosts=state.
 function recommendations(){let rec=[];if(state.stats.blockedStarts>0)rec.push('Reforce o planejamento de componentes críticos antes de aceitar e liberar OPs.');if(state.stats.late>0)rec.push('Priorize OPs com menor prazo e acompanhe filas antes de iniciar novas ordens.');if((state.finished.length+Object.values(state.finishedInventory||{}).reduce((a,b)=>a+b,0))>3)rec.push('Há produto acabado parado; avalie se a estratégia declarada comporta esse nível de estoque pronto.');if(state.transit.length>0)rec.push('Considere o prazo dos fornecedores: compras lentas podem não resolver falta imediata.');if(!rec.length)rec.push('Continue comparando pedidos, estoque e filas antes de iniciar produção.');return rec.join(' ')}
 function closeReport(){document.getElementById('reportModal').style.display='none';updateControls();}
 function nextDay(){if(!state)return;if(state.running){finishDay();return}document.getElementById('reportModal').style.display='none';const previousDay=state.day;state.finished.forEach(id=>{const op=state.ops.find(o=>o.id===id);if(op&&!op.fromInventory){state.finishedInventory[op.model]=(state.finishedInventory[op.model]||0)+1;state.finishedInventoryCost[op.model]=(state.finishedInventoryCost[op.model]||0)+(op.cost||modelCost(op.model,'reg'));}});Object.keys(state.reserved).forEach(k=>state.reserved[k]=0);const carriedTransit=state.transit.filter(t=>t.kind==='part').map(t=>{const remaining=Math.max(1,state.time-t.arrive);return {...t,arrive:DAY_SECONDS-remaining,orderedAt:DAY_SECONDS};});state.day=previousDay+1;state.time=DAY_SECONDS;state.dayStartCash=state.cash;state.running=true;state.paused=false;state.dayEnded=false;state.orders=[];state.ops=[];state.transit=carriedTransit;state.stations=stations.map(()=>({job:null,queue:[],broken:false}));state.finished=[];state.stats=newDailyStats();state.log=[];activeChecklistKey=null;const ck=document.getElementById('checklist');if(ck)ck.innerHTML=checklistDefault;document.getElementById('setup').classList.add('hide');document.getElementById('game').classList.remove('hide');document.getElementById('pauseBtn').disabled=false;document.getElementById('endBtn').disabled=false;document.getElementById('nextDayBtn').disabled=true;document.getElementById('pauseBtn').textContent='Pausar';document.getElementById('pauseOverlay').style.display='none';log(`Dia ${state.day} iniciado. Caixa e estoques foram mantidos do dia anterior. Produto acabado em estoque também foi preservado.`);if(carriedTransit.length)log(`${carriedTransit.length} compra(s) de componentes continuaram em trânsito para o novo dia.`);for(let i=0;i<3;i++)generateOrder();generateDailyGoals();renderAll();}
+
+
+/* Ajuste incremental: atendimento de pedido usando OP pronta + estoque acabado */
+function orderLinkedFinishedIds(order){
+  return (order?.ops||[]).filter(id=>state.finished.includes(id));
+}
+function orderLinkedFinishedCount(order){
+  return orderLinkedFinishedIds(order).length;
+}
+function finishedUsefulForOrder(order){
+  const inv=state.finishedInventory?.[order.model]||0;
+  const linked=order.status==='accepted'?orderLinkedFinishedCount(order):0;
+  return linked+inv;
+}
+function inventoryNeededToFulfill(order){
+  const linked=order.status==='accepted'?orderLinkedFinishedCount(order):0;
+  return Math.max(0,order.qty-linked);
+}
+function canFulfillOrderWithFinished(order){
+  if(!order||!['new','accepted'].includes(order.status))return false;
+  return (state.finishedInventory?.[order.model]||0)>=inventoryNeededToFulfill(order);
+}
+function detachUnfinishedOrderOpsToStock(order, usedLinkedIds=[]){
+  const used=new Set(usedLinkedIds);
+  (order.ops||[]).forEach(id=>{
+    if(used.has(id))return;
+    const op=state.ops.find(x=>x.id===id);
+    if(!op)return;
+    op.orderId=null;
+    op.isStock=true;
+    op.deadline=null;
+    if(op.status==='finished'){
+      const ix=state.finished.indexOf(op.id);
+      if(ix>=0)state.finished.splice(ix,1);
+      state.finishedInventory[op.model]=(state.finishedInventory[op.model]||0)+1;
+      state.finishedInventoryCost[op.model]=(state.finishedInventoryCost[op.model]||0)+(op.cost||modelCost(op.model,'reg'));
+      op.status='stocked';
+    }
+  });
+}
+function fulfillFromFinishedInventory(id){
+  const order=state.orders.find(o=>o.id===id);
+  if(!order||!['new','accepted'].includes(order.status))return;
+  const oldStatus=order.status;
+  const linkedIds=oldStatus==='accepted'?orderLinkedFinishedIds(order):[];
+  const linkedCount=linkedIds.length;
+  const needInventory=Math.max(0,order.qty-linkedCount);
+  const readyInventory=state.finishedInventory?.[order.model]||0;
+  if(readyInventory<needInventory){
+    const useful=linkedCount+readyInventory;
+    log(`Pedido #${id} não pode ser atendido com produto acabado: há ${useful}/${order.qty} ${models[order.model].name} pronto(s) útil(eis) para este pedido.`);
+    return;
+  }
+  let cogs=0;
+  linkedIds.forEach(opId=>{
+    const ix=state.finished.indexOf(opId);
+    if(ix>=0)state.finished.splice(ix,1);
+    const op=state.ops.find(o=>o.id===opId);
+    if(op){cogs+=(op.cost||modelCost(op.model,'reg'));op.status='delivered';op.delivered=true;}
+  });
+  if(needInventory>0){
+    cogs+=useFinishedInventory(order.model,needInventory)||0;
+  }
+  if(oldStatus==='accepted'&&order.ops?.length){
+    detachUnfinishedOrderOpsToStock(order,linkedIds);
+    const remaining=(order.ops||[]).length-linkedIds.length;
+    if(remaining>0)log(`${remaining} OP(s) ainda em produção do pedido #${id} foram mantidas como produção para estoque, pois o pedido foi completado com produto acabado.`);
+  }
+  order.status='delivered';
+  if(oldStatus==='new')state.stats.accepted++;
+  state.stats.delivered++;
+  state.stats.finishedStockOrders++;
+  state.stats.finishedStockUnits[order.model]=(state.stats.finishedStockUnits[order.model]||0)+order.qty;
+  state.stats.deliveredModels[order.model]=(state.stats.deliveredModels[order.model]||0)+order.qty;
+  state.stats.finishedStockCostUsed=(state.stats.finishedStockCostUsed||0)+cogs;
+  const revenue=models[order.model].price*order.qty;
+  state.cash+=revenue;
+  if(state.time<order.deadline)state.stats.late++;
+  const origem=linkedCount>0&&needInventory>0?`${linkedCount} OP pronta do pedido + ${needInventory} do estoque pronto`:linkedCount>0?`${linkedCount} OP(s) pronta(s) do pedido`:`${needInventory} do estoque pronto`;
+  log(`Pedido #${id} atendido com produto acabado (${origem}). Custo contábil baixado: ${fmtMoney(cogs)}. Receita: ${fmtMoney(revenue)}${state.time<order.deadline?' com atraso.':'.'}`);
+  order.ops=[];
+  renderAll();
+}
+function deliverOrder(orderId){
+  const o=state.orders.find(x=>x.id===orderId);
+  if(!o||!['accepted','outsourced'].includes(o.status))return;
+  const allReady=o.status==='accepted'&&o.ops.length&&o.ops.every(id=>state.finished.includes(id));
+  if(!allReady){
+    if(canFulfillOrderWithFinished(o)){fulfillFromFinishedInventory(orderId);return;}
+    log(`Pedido #${orderId} ainda não está completo para expedição.`);
+    return;
+  }
+  o.status='delivered';
+  const revenue=models[o.model].price*o.qty;
+  state.cash+=revenue;
+  state.stats.delivered++;
+  state.stats.deliveredModels[o.model]+=o.qty;
+  if(state.time<o.deadline)state.stats.late++;
+  let cogs=0;
+  o.ops.forEach(id=>{const ix=state.finished.indexOf(id);if(ix>=0)state.finished.splice(ix,1);const op=state.ops.find(x=>x.id===id);if(op){cogs+=(op.cost||modelCost(op.model,'reg'));op.status='delivered';op.delivered=true;}});
+  state.stats.finishedStockCostUsed=(state.stats.finishedStockCostUsed||0)+cogs;
+  log(`Pedido #${orderId} entregue. Receita: ${fmtMoney(revenue)}${state.time<o.deadline?' com atraso.':'.'}`);
+  renderAll();
+}
+function renderOrders(){
+  const el=document.getElementById('orders');
+  el.innerHTML='';
+  state.orders.filter(o=>o.status!=='refused'&&o.status!=='delivered').forEach(o=>{
+    const d=state.time-o.deadline;
+    const deadCls=d>240?'ok':d>90?'warn':'bad';
+    const div=document.createElement('div');
+    div.className='card order';
+    const costs=costRange(o.model,o.qty);
+    const receita=models[o.model].price*o.qty;
+    const marginReg=receita-costs.reg;
+    const terceiriza=Math.round(receita*.68);
+    const readyInv=state.finishedInventory[o.model]||0;
+    const linkedReady=o.status==='accepted'?orderLinkedFinishedCount(o):0;
+    const usefulReady=finishedUsefulForOrder(o);
+    const needInv=inventoryNeededToFulfill(o);
+    const canFulfill=canFulfillOrderWithFinished(o);
+    const allReady=o.status==='accepted'&&o.ops.length&&o.ops.every(id=>state.finished.includes(id));
+    let actions='';
+    if(o.status==='new'){
+      actions=`${canFulfill?`<button class="good" onclick="fulfillFromFinishedInventory('${o.id}')">Atender com estoque pronto</button>`:`<button class="good" disabled title="Estoque pronto insuficiente">Estoque pronto insuficiente</button>`}<button class="primary" onclick="acceptOrder('${o.id}')">Produzir novas OPs</button><button class="bad" onclick="refuseOrder('${o.id}')">Recusar</button><button class="warn" onclick="outsourceOrder('${o.id}')">Terceirizar</button>`;
+    }else{
+      actions=`${canFulfill?`<button class="good" onclick="fulfillFromFinishedInventory('${o.id}')">Completar com produto acabado</button>`:`<button class="good" disabled title="Produto acabado insuficiente">Produto acabado insuficiente</button>`}<button class="primary" onclick="deliverOrder('${o.id}')" ${allReady?'':'disabled'}>${allReady?'Entregar pedido':'Aguardando produto pronto'}</button>`;
+    }
+    const visibleStatus=allReady?'produto pronto para expedição':(canFulfill&&o.status==='accepted'?'pode ser completado com produto acabado':statusLabel(o.status));
+    const readyText=o.status==='accepted'
+      ? `Produto pronto útil: ${usefulReady}/${o.qty} <span class="mini">(OP pronta: ${linkedReady}; estoque: ${readyInv}; falta do estoque: ${needInv})</span>`
+      : `Estoque pronto: ${readyInv}/${o.qty}`;
+    div.innerHTML=`<h3>#${o.id} — ${o.qty} ${models[o.model].icon} ${models[o.model].name}</h3><span class="badge deadline ${deadCls}">Prazo restante: ${fmtTime(d)}</span><span class="badge">Receita ${fmtMoney(receita)}</span><span class="badge">${readyText}</span><span class="badge">Custo interno estimado ${fmtMoney(costs.reg)}</span><span class="badge">Margem estimada ${fmtMoney(marginReg)}</span><div class="mini" style="margin-top:5px"><b>Custo por fornecedor:</b> Econômico ${fmtMoney(costs.eco)} | Regular ${fmtMoney(costs.reg)} | Premium ${fmtMoney(costs.pre)} | Terceirizar ${fmtMoney(terceiriza)}</div><div class="bom">${Object.entries(requiredBom(o.model,o.qty)).map(([k,v])=>`<span>${parts[k].name}: ${v}</span>`).join('')}</div><div class="op-actions">${actions}<button onclick="showChecklist({type:'order',id:'${o.id}'})">Checklist</button></div><div class="mini">Status: ${visibleStatus}</div>`;
+    el.appendChild(div);
+  });
+}
+
 </script>
 </body>
 </html>
